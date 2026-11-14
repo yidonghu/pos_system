@@ -1,0 +1,27 @@
+# ---- 构建产物（可重新生成） ----
+backend/target/
+*.class
+*.jar
+!portable/*.jar
+
+# ---- 运行时数据：含真实营业数据与证书，绝不入库 ----
+data/
+backup/
+dist/
+
+# ---- 日志 ----
+*.log
+*.err
+
+# ---- 编辑器 / 系统 ----
+.idea/
+.vscode/
+*.iml
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 临时文件 ----
+*.tmp
+~$*

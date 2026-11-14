@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理后台 · POS</title>
+    <link rel="stylesheet" href="/css/base.css?v=20261114d">
+    <link rel="stylesheet" href="/css/admin.css?v=20261114d">
+</head>
+<body>
+
+<div class="shell" id="shell" hidden>
+    <aside class="sidebar">
+        <div class="side-brand"><span class="dot"></span><span id="sideShop">POS 管理后台</span></div>
+        <nav class="nav" id="nav">
+            <button data-page="dash" class="active">📊 工作台</button>
+            <button data-page="products">🏷️ 商品</button>
+            <button data-page="inventory">📦 库存</button>
+            <button data-page="orders">🧾 订单</button>
+            <button data-page="devices">📱 设备</button>
+            <button data-page="reports">📈 报表</button>
+            <button data-page="settings">⚙️ 设置</button>
+        </nav>
+        <div class="side-foot">
+            <span>v1.0</span>
+            <button class="link" id="logoutBtn">退出</button>
+        </div>
+    </aside>
+    <main class="main">
+        <div class="page-head">
+            <h2 id="pageTitle">工作台</h2>
+            <div class="page-actions" id="pageActions"></div>
+        </div>
+        <div id="page"></div>
+    </main>
+</div>
+
+<!-- 登录 -->
+<div class="modal-mask show" id="loginMask">
+    <div class="modal" style="max-width:380px">
+        <div class="modal-body">
+            <div style="text-align:center;padding:6px 0 18px">
+                <div style="font-size:26px;font-weight:700;color:var(--brand)">POS 管理后台</div>
+                <div style="font-size:13px;color:var(--muted);margin-top:6px">单店本地收银系统</div>
+            </div>
+            <div class="field">
+                <label>管理员密码</label>
+                <input class="input" id="loginPwd" type="password" placeholder="默认 admin888" autocomplete="current-password">
+                <div class="hint">首次使用默认密码 admin888，登录后请在「设置」中修改</div>
+            </div>
+            <button class="btn primary block big" id="loginBtn">登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-mask" id="modalMask">
+    <div class="modal" id="modalBox">
+        <div class="modal-head"><h3 id="mTitle">标题</h3><button class="modal-close" id="mClose">×</button></div>
+        <div class="modal-body" id="mBody"></div>
+        <div class="modal-foot" id="mFoot"></div>
+    </div>
+</div>
+
+<input type="file" id="importFile" accept=".csv,text/csv" style="display:none">
+<input type="file" id="restoreFile" accept=".db,application/octet-stream" style="display:none">
+
+<div id="toast"></div>
+<script src="/js/vendor/zxing.min.js"></script>
+<script src="/js/scan.js?v=20261114f"></script>
+<script src="/js/admin.js?v=20261114f"></script>
+</body>
+</html>

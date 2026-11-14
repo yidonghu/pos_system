@@ -1,0 +1,26 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: pos
+  datasource:
+    url: jdbc:sqlite:${POS_DB:data/pos.db}?journal_mode=WAL&busy_timeout=5000&foreign_keys=on&synchronous=NORMAL
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 1
+      connection-timeout: 10000
+  web:
+    resources:
+      static-locations: file:./web/,classpath:/static/
+      cache:
+        period: 0
+  jackson:
+    default-property-inclusion: always
+
+logging:
+  level:
+    root: WARN
+    com.pos: INFO

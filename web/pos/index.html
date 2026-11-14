@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0F766E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>收银台</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/pos.css">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="brand">
+        <div class="logo">POS</div>
+        <div class="brand-name" id="shopName">收银台</div>
+    </div>
+    <div class="topbar-right">
+        <span class="chip" id="deviceChip"><span class="dot"></span><span class="txt" id="deviceName">设备</span></span>
+        <span class="chip" id="netChip"><span class="dot"></span><span class="txt">在线</span></span>
+        <button class="btn ghost sm" id="shiftBtn">开班</button>
+        <button class="btn ghost sm" id="moreBtn">更多</button>
+    </div>
+</div>
+
+<div class="layout">
+    <section class="catalog">
+        <div class="catalog-top">
+            <div class="search">
+                <input class="input" id="searchInput" placeholder="扫描商品条码 / 搜索商品名" autocomplete="off" enterkeyhint="search">
+                <button class="btn" id="camBtn" title="用摄像头扫码">扫码</button>
+            </div>
+            <div class="cats" id="cats"></div>
+        </div>
+        <div class="grid" id="grid"></div>
+    </section>
+
+    <aside class="cart collapsed" id="cartPane">
+        <div class="cart-head" id="cartHead">
+            <span>本单商品 <i id="headCount">0</i> 件</span>
+            <button class="link" id="clearBtn">清空</button>
+        </div>
+        <div class="cart-list" id="cartList"></div>
+        <div class="cart-foot">
+            <div class="cart-extra">
+                <button class="btn ghost" id="discountBtn">优惠 / 抹零</button>
+                <button class="btn ghost" id="heldBtn">挂单</button>
+                <button class="btn ghost" id="pickBtn">取单</button>
+            </div>
+            <div class="sum-row total">
+                <span class="label">合计</span>
+                <span class="value">¥<span id="sumAmt">0.00</span></span>
+            </div>
+            <div class="sum-row">
+                <span class="label" id="sumTip">共 0 件 · 未优惠</span>
+            </div>
+            <div class="cart-hint" id="cartHint">共 0 件 · 查看明细 ▲</div>
+            <div class="cart-actions">
+                <button class="btn primary big block" id="payBtn">结算</button>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<!-- 设备初始化 -->
+<div class="modal-mask" id="wizardMask">
+    <div class="modal" style="max-width:480px">
+        <div class="modal-body">
+            <div class="wizard-logo">
+                <div class="big">收银台初始化</div>
+                <div class="hint" style="color:var(--muted);font-size:13px;margin-top:6px">
+                    给这台设备起个名字，订单和小票都会显示它
+                </div>
+            </div>
+            <div class="field">
+                <label>设备名称</label>
+                <input class="input" id="wizName" maxlength="20" placeholder="如：前台1 / 自助机A / 手机收银">
+                <div class="hint">建议用位置命名，例如「前台1」「二楼自助机」</div>
+            </div>
+            <div class="hint-box">
+                设备 ID 自动生成并保存在本机浏览器。换浏览器或清空数据后，可在后台「设备管理」生成 6 位设备码重新绑定。
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn ghost" id="wizBindBtn">绑定已有设备</button>
+            <button class="btn primary" id="wizOk">开始收银</button>
+        </div>
+    </div>
+</div>
+
+<!-- 绑定设备 -->
+<div class="modal-mask" id="bindMask">
+    <div class="modal" style="max-width:420px">
+        <div class="modal-head"><h3>绑定已有设备</h3><button class="modal-close" data-close="bindMask">×</button></div>
+        <div class="modal-body">
+            <div class="field">
+                <label>6 位设备码</label>
+                <input class="input" id="bindCode" maxlength="6" placeholder="如 A3K9ZP" style="letter-spacing:3px;text-transform:uppercase">
+                <div class="hint">在管理后台「设备」页点击「生成设备码」获取</div>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn ghost" data-close="bindMask">取消</button>
+            <button class="btn primary" id="bindOk">绑定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 结算 -->
+<div class="modal-mask" id="payMask">
+    <div class="modal" style="max-width:560px">
+        <div class="modal-head"><h3>结算</h3><button class="modal-close" data-close="payMask">×</button></div>
+        <div class="modal-body">
+            <div class="pay-total">
+                <div class="money" id="payMoney">¥0.00</div>
+                <div class="tip" id="payTip">应收金额</div>
+            </div>
+            <div class="methods" id="methods">
+                <button class="method-btn active" data-method="cash"><span class="ico">💵</span>现金</button>
+                <button class="method-btn" data-method="wechat"><span class="ico">🟩</span>微信</button>
+                <button class="method-btn" data-method="alipay"><span class="ico">🟦</span>支付宝</button>
+                <button class="method-btn" data-method="bank"><span class="ico">💳</span>银行卡</button>
+            </div>
+            <div class="pay-rows" id="payRows"></div>
+            <div class="pay-remain">
+                <span>待收 <b id="remainAmt">¥0.00</b></span>
+                <button class="link" id="addPayBtn">＋ 组合支付</button>
+            </div>
+            <div class="cash-panel" id="cashPanel">
+                <div class="line"><span>实收现金</span><span>¥<span id="cashTendered">0.00</span></span></div>
+                <div class="line"><span>找零</span><span class="change" id="cashChange">¥0.00</span></div>
+                <div class="quick-cash" id="quickCash"></div>
+                <div class="keypad" id="keypad"></div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+                <label>备注（可选）</label>
+                <input class="input" id="orderRemark" placeholder="如：特殊说明">
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn ghost" data-close="payMask">取消</button>
+            <button class="btn primary" id="confirmPay">确认收款</button>
+        </div>
+    </div>
+</div>
+
+<!-- 优惠 / 抹零 -->
+<div class="modal-mask" id="discMask">
+    <div class="modal" style="max-width:440px">
+        <div class="modal-head"><h3>优惠 / 抹零</h3><button class="modal-close" data-close="discMask">×</button></div>
+        <div class="modal-body">
+            <div class="field">
+                <label>整单折扣</label>
+                <div style="display:flex;gap:8px;flex-wrap:wrap" id="discQuick">
+                    <button class="btn ghost sm" data-pct="0">不打折</button>
+                    <button class="btn ghost sm" data-pct="95">95 折</button>
+                    <button class="btn ghost sm" data-pct="90">9 折</button>
+                    <button class="btn ghost sm" data-pct="85">85 折</button>
+                    <button class="btn ghost sm" data-pct="80">8 折</button>
+                </div>
+                <div class="hint">折扣金额：<span id="discPreview">¥0.00</span></div>
+            </div>
+            <div class="field">
+                <label>抹零</label>
+                <div style="display:flex;gap:8px">
+                    <button class="btn ghost sm" data-round="0">不抹零</button>
+                    <button class="btn ghost sm" data-round="jiao">抹分</button>
+                    <button class="btn ghost sm" data-round="yuan">抹到元</button>
+                </div>
+                <div class="hint">抹零金额：<span id="roundPreview">¥0.00</span></div>
+            </div>
+            <div class="hint-box">当前订单：¥<b id="discTotal">0.00</b>，优惠后应收 ¥<b id="discPayable">0.00</b></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn ghost" id="discReset">清除优惠</button>
+            <button class="btn primary" data-close="discMask">完成</button>
+        </div>
+    </div>
+</div>
+
+<!-- 挂单 / 取单 -->
+<div class="modal-mask" id="heldMask">
+    <div class="modal" style="max-width:520px">
+        <div class="modal-head"><h3>挂单列表</h3><button class="modal-close" data-close="heldMask">×</button></div>
+        <div class="modal-body" id="heldList"></div>
+        <div class="modal-foot"><button class="btn ghost" data-close="heldMask">关闭</button></div>
+    </div>
+</div>
+
+<!-- 交接班 -->
+<div class="modal-mask" id="shiftMask">
+    <div class="modal" style="max-width:460px">
+        <div class="modal-head"><h3 id="shiftTitle">交接班</h3><button class="modal-close" data-close="shiftMask">×</button></div>
+        <div class="modal-body" id="shiftBody"></div>
+        <div class="modal-foot" id="shiftFoot"></div>
+    </div>
+</div>
+
+<!-- 扫码 -->
+<div class="modal-mask" id="camMask">
+    <div class="modal" style="max-width:560px">
+        <div class="modal-head"><h3>摄像头扫码</h3><button class="modal-close" data-close="camMask">×</button></div>
+        <div class="modal-body">
+            <div class="cam-wrap">
+                <video id="camVideo" playsinline muted autoplay></video>
+                <div class="cam-frame"></div>
+            </div>
+            <div class="hint" style="margin-top:8px;color:var(--muted);font-size:12px" id="camTip">把条码放进框里</div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn ghost sm" id="camAlbum">相册识别</button>
+                <input type="file" id="camFile" accept="image/*" capture="environment" style="display:none">
+            </div>
+            <div class="field" style="margin-top:10px;margin-bottom:0">
+                <input class="input" id="camManual" placeholder="手动输入条码，回车确认" enterkeyhint="done">
+            </div>
+        </div>
+        <div class="modal-foot"><button class="btn ghost" data-close="camMask">关闭</button></div>
+    </div>
+</div>
+
+<!-- 小票 -->
+<div class="modal-mask" id="receiptMask">
+    <div class="modal" style="max-width:400px">
+        <div class="modal-head"><h3>收款成功</h3><button class="modal-close" data-close="receiptMask">×</button></div>
+        <div class="modal-body" style="background:#F8FAFC">
+            <div class="card pad" style="box-shadow:none">
+                <div id="receiptPreview"></div>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn ghost" id="printBtn">打印小票</button>
+            <button class="btn primary" data-close="receiptMask">继续收银</button>
+        </div>
+    </div>
+</div>
+
+<!-- 更多 -->
+<div class="modal-mask" id="moreMask">
+    <div class="modal" style="max-width:400px">
+        <div class="modal-head"><h3>更多</h3><button class="modal-close" data-close="moreMask">×</button></div>
+        <div class="modal-body" style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn block" id="moreShift">交接班</button>
+            <button class="btn block" id="moreRefresh">刷新商品与库存</button>
+            <button class="btn block" id="moreAdmin">打开管理后台</button>
+            <button class="btn block" id="moreRename">修改设备名</button>
+            <div class="hint" style="color:var(--muted);font-size:12px;text-align:center;margin-top:8px">
+                设备 ID：<span id="moreDeviceId" style="font-family:monospace"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="printArea"></div>
+<div id="toast"></div>
+
+<script src="/js/pos.js?v=20261114g"></script>
+</body>
+</html>
