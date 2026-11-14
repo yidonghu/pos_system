@@ -21,6 +21,8 @@
 2. 解压到任意目录（别放 C 盘系统目录），双击 `启动.bat`
 3. 浏览器自动打开 `http://localhost:8080`
 
+已打包，可打开[yidonghu.github.io/resources/20261114-pos-zip](https://yidonghu.github.io/resources/20261114-pos-zip/)下载
+
 ### 方式二：源码运行（需 JDK 17 + Maven）
 
 ```bat
@@ -74,11 +76,11 @@ pos_system/
 
 ## 手机端与 HTTPS（摄像头扫码必读）
 
-| 地址 | 端口 | 场景 | 能否用摄像头 |
-|---|---|---|---|
-| `http://本机IP:8080/pos` | 8080 | 电脑浏览器、扫码枪、手输条码 | 安卓下**不能**（非安全上下文） |
-| `https://本机IP:8443/pos` | 8443 | 手机、自助收银机 | **可以** |
-| `https://localhost:8443/pos` | 8443 | 主机本机访问 | 可以 |
+| 地址                           | 端口 | 场景                         | 能否用摄像头                         |
+| ------------------------------ | ---- | ---------------------------- | ------------------------------------ |
+| `http://本机IP:8080/pos`     | 8080 | 电脑浏览器、扫码枪、手输条码 | 安卓下**不能**（非安全上下文） |
+| `https://本机IP:8443/pos`    | 8443 | 手机、自助收银机             | **可以**                       |
+| `https://localhost:8443/pos` | 8443 | 主机本机访问                 | 可以                                 |
 
 - 证书是启动时自动生成的自签证书：`data/tls.p12`（密码 `pos-local`，别名 `pos`，10 年有效），SAN 自动写入 `localhost`、`pos.home.arpa`、`127.0.0.1` 与当前所有局域网 IP；主机 IP 变了会自动重签。
 - 手机首次打开 https 会提示「连接不是私密连接」：点「高级 → 继续前往」。系统完全离线、没有公共 CA，这是自签证书的正常现象。
@@ -90,11 +92,11 @@ pos_system/
 
 三条通道，互相兜底：
 
-| 通道 | 适用 | 说明 |
-|---|---|---|
-| 扫码枪 | 电脑 / 收银主机 | USB HID 键盘楔入型，免驱，扫完自动入车（建议枪体设 UTF-8 + 结尾回车） |
-| 摄像头 | 手机、自助机（https） | 有 `BarcodeDetector` 先用原生；没有或解码服务不可用，自动降级到内置离线 ZXing |
-| 相册 / 手输 | 全部 | 拍照识别图片里的码；或直接输入条码回车 |
+| 通道        | 适用                  | 说明                                                                            |
+| ----------- | --------------------- | ------------------------------------------------------------------------------- |
+| 扫码枪      | 电脑 / 收银主机       | USB HID 键盘楔入型，免驱，扫完自动入车（建议枪体设 UTF-8 + 结尾回车）           |
+| 摄像头      | 手机、自助机（https） | 有 `BarcodeDetector` 先用原生；没有或解码服务不可用，自动降级到内置离线 ZXing |
+| 相册 / 手输 | 全部                  | 拍照识别图片里的码；或直接输入条码回车                                          |
 
 支持格式：EAN-13、EAN-8、UPC-A、UPC-E、Code 128、Code 39、Code 93、ITF、QR。
 
@@ -116,15 +118,15 @@ pos_system/
 
 ### 管理后台 `/admin`（管理员密码）
 
-| 模块 | 能力 |
-|---|---|
-| 工作台 | 今日营业额 / 订单 / 客单价、7 日趋势、支付占比、库存预警 |
-| 商品 | 一品多码、分类、进价售价、预警值、CSV 导入导出、条码框旁扫码、行内删除 |
-| 库存 | 入库 / 出库 / 报损 / 盘点、库存流水、成本统计 |
-| 订单 | 明细、重打小票、整单退货（红冲） |
-| 设备 | 改名、6 位设备码、权限开关（改价 / 退货 / 库存 / 折扣上限）、停用 |
-| 报表 | 支付方式、设备排行、热销 TOP10、每日汇总，3 种 CSV 导出 |
-| 设置 | 店铺信息、小票页脚、负库存策略、自动打印、改密码、备份 / 恢复、初始化 / 清空数据；顶部显示手机访问地址 + 二维码 |
+| 模块   | 能力                                                                                                            |
+| ------ | --------------------------------------------------------------------------------------------------------------- |
+| 工作台 | 今日营业额 / 订单 / 客单价、7 日趋势、支付占比、库存预警                                                        |
+| 商品   | 一品多码、分类、进价售价、预警值、CSV 导入导出、条码框旁扫码、行内删除                                          |
+| 库存   | 入库 / 出库 / 报损 / 盘点、库存流水、成本统计                                                                   |
+| 订单   | 明细、重打小票、整单退货（红冲）                                                                                |
+| 设备   | 改名、6 位设备码、权限开关（改价 / 退货 / 库存 / 折扣上限）、停用                                               |
+| 报表   | 支付方式、设备排行、热销 TOP10、每日汇总，3 种 CSV 导出                                                         |
+| 设置   | 店铺信息、小票页脚、负库存策略、自动打印、改密码、备份 / 恢复、初始化 / 清空数据；顶部显示手机访问地址 + 二维码 |
 
 后台页面可直达收藏：`/admin#products`、`#inventory`、`#orders`、`#devices`、`#reports`、`#settings`。
 
@@ -143,11 +145,11 @@ pos_system/
 
 后台「设置 → 初始化 / 清空数据」（接口 `GET /api/admin/system/stats`、`POST /api/admin/system/reset?demo=true|false`）：
 
-| 操作 | 行为 | 边界 |
-|---|---|---|
-| 刷新统计 | 读商品 / 分类 / 订单 / 设备 / 库存流水 / 挂单 / 交接班条数与库大小 | 不改数据 |
-| 清空所有数据 | 先 `VACUUM INTO backup/pos-before-reset-<时间>-毫秒.db`，再清空全部业务表、重置设置默认值、重建 3 个默认分类 | 管理员密码保留，备份不删 |
-| 清空并写入演示商品 | 同上，另写 6 个演示商品（`6900000000001`~`006`，`demo=1`） | 同上 |
+| 操作               | 行为                                                                                                           | 边界                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| 刷新统计           | 读商品 / 分类 / 订单 / 设备 / 库存流水 / 挂单 / 交接班条数与库大小                                             | 不改数据                 |
+| 清空所有数据       | 先 `VACUUM INTO backup/pos-before-reset-<时间>-毫秒.db`，再清空全部业务表、重置设置默认值、重建 3 个默认分类 | 管理员密码保留，备份不删 |
+| 清空并写入演示商品 | 同上，另写 6 个演示商品（`6900000000001`~`006`，`demo=1`）                                               | 同上                     |
 
 两个按钮都有二次确认，执行中按钮置灰。备份名带毫秒，连续两次重置不会因文件名冲突失败。
 
@@ -157,9 +159,9 @@ pos_system/
 
 表头顺序不限，缺列按空处理，编码 UTF-8：
 
-| 名称 | 分类 | 条码 | 单位 | 进价 | 售价 | 库存 | 预警值 |
-|---|---|---|---|---|---|---|---|
-| 农夫山泉 550ml | 饮料 | 6900000000001 | 件 | 2.00 | 2.50 | 50 | 5 |
+| 名称           | 分类 | 条码          | 单位 | 进价 | 售价 | 库存 | 预警值 |
+| -------------- | ---- | ------------- | ---- | ---- | ---- | ---- | ------ |
+| 农夫山泉 550ml | 饮料 | 6900000000001 | 件   | 2.00 | 2.50 | 50   | 5      |
 
 - 价格单位是**元**，可带两位小数
 - 条码已存在则更新该商品，否则新建；分类不存在会自动创建
@@ -196,12 +198,12 @@ dist\POS收银绿色版.zip   ≈ 75 MB
 
 ## 常驻运行
 
-| 需求 | 做法 |
-|---|---|
+| 需求         | 做法                                                                                                           |
+| ------------ | -------------------------------------------------------------------------------------------------------------- |
 | 开机自动启动 | 管理员运行 `安装开机自启.bat`（计划任务 `POS-Server` → `start-service.bat`，SYSTEM 权限、崩溃自动重启） |
-| 取消自启 | 管理员运行 `卸载开机自启.bat` |
-| 局域网可访问 | 管理员运行 `放行防火墙端口.bat`，放行 TCP 8080 / 8443 |
-| 主机别睡眠 | 电源选项把睡眠设为「从不」，否则手机端会断连 |
+| 取消自启     | 管理员运行 `卸载开机自启.bat`                                                                                |
+| 局域网可访问 | 管理员运行 `放行防火墙端口.bat`，放行 TCP 8080 / 8443                                                        |
+| 主机别睡眠   | 电源选项把睡眠设为「从不」，否则手机端会断连                                                                   |
 
 ---
 
@@ -209,16 +211,16 @@ dist\POS收银绿色版.zip   ≈ 75 MB
 
 鉴权：`POST /api/admin/login` 换 token，其余 `/api/admin/**` 需带 `X-Admin-Token`（12 小时过期）。收银端用请求头 `X-Device-Id` 标识设备。
 
-| 分组 | 主要接口 |
-|---|---|
+| 分组        | 主要接口                                                                                                                                                                                                       |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 商品 / 分类 | `GET /api/products`、`GET /api/products/barcode/{code}`、`GET /api/categories`、`GET/POST/PUT/DELETE /api/admin/products`、`POST /api/admin/products/import`、`GET /api/admin/products/export.csv` |
-| 设备 | `POST /api/device/register`、`GET /api/device/me`、`POST /api/device/bind`、`GET /api/device/config`、`GET/PUT/DELETE /api/admin/devices` |
-| 库存 | `GET /api/inventory`、`GET /api/inventory/alerts`、`POST /api/inventory/move`、`POST /api/inventory/stocktake`、`GET /api/inventory/movements` |
-| 订单 | `POST /api/orders/checkout`、`GET /api/orders/{id}`、`POST /api/orders/{id}/return`、`POST /api/orders/hold`、`GET /api/orders/held` |
-| 交接班 | `POST /api/shifts/start`、`GET /api/shifts/current`、`POST /api/shifts/end`、`GET /api/admin/shifts` |
-| 报表 | `GET /api/admin/reports/overview`、`GET /api/admin/reports/export.csv?type=sales\|payments\|products&from=&to=` |
-| 系统 | `GET /api/admin/settings`、`PUT /api/admin/settings`、`GET /api/admin/backup`、`POST /api/admin/demo/clear`、`GET /api/admin/system/stats`、`POST /api/admin/system/reset` |
-| 杂项 | `GET /api/qr.png?text=&size=`（服务端 ZXing 现画二维码） |
+| 设备        | `POST /api/device/register`、`GET /api/device/me`、`POST /api/device/bind`、`GET /api/device/config`、`GET/PUT/DELETE /api/admin/devices`                                                            |
+| 库存        | `GET /api/inventory`、`GET /api/inventory/alerts`、`POST /api/inventory/move`、`POST /api/inventory/stocktake`、`GET /api/inventory/movements`                                                       |
+| 订单        | `POST /api/orders/checkout`、`GET /api/orders/{id}`、`POST /api/orders/{id}/return`、`POST /api/orders/hold`、`GET /api/orders/held`                                                                 |
+| 交接班      | `POST /api/shifts/start`、`GET /api/shifts/current`、`POST /api/shifts/end`、`GET /api/admin/shifts`                                                                                                   |
+| 报表        | `GET /api/admin/reports/overview`、`GET /api/admin/reports/export.csv?type=sales\|payments\|products&from=&to=`                                                                                              |
+| 系统        | `GET /api/admin/settings`、`PUT /api/admin/settings`、`GET /api/admin/backup`、`POST /api/admin/demo/clear`、`GET /api/admin/system/stats`、`POST /api/admin/system/reset`                         |
+| 杂项        | `GET /api/qr.png?text=&size=`（服务端 ZXing 现画二维码）                                                                                                                                                     |
 
 ---
 
